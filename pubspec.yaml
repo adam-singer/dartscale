@@ -1,0 +1,6 @@
+name: dartscale
+version: 0.0.1
+author: Marty Glaubitz <martyglaubitz@gmail.com>
+description: modular noMVC application framework
+dependencies:
+  browser: any
