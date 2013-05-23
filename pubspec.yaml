@@ -1,6 +1,6 @@
 name: dartscale
 version: 0.0.1
 author: Marty Glaubitz <martyglaubitz@gmail.com>
-description: modular noMVC application framework
+description: A modular no-MVC application framework for Dart.
 dependencies:
-  browser: any
+  unittest: any
