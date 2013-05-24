@@ -1,78 +1,141 @@
 library dartscale;
 
 class Context {
-  Map<String, Map<String, List<Module>>>  _subscriptions = new Map<String, Map<String, List<Module>>>();
   Map<String, Module>                     _modules = new Map<String, Module>();
-  
-  Map<String, Map<String, List<Module>>> get subscriptions => this._subscriptions;
   Map<String, Module>                    get modules => this._modules;
   
-  void registerModule(String moduleId, Module module) {
+  Map<String, Map<String, List<ChannelSubscribtion>>> _subscriptions = new Map<String, Map<String, List<ChannelSubscribtion>>>();
+  Map<String, Map<String, List<ChannelSubscribtion>>> get subscriptions => this._subscriptions;
+  
+  void register(String moduleId, Module module) {
     if (this._modules.containsKey(moduleId)) {
-      throw new Exception("");
+      throw new Exception("module with id ${moduleId} already registered");
     }
     else {
       this._modules[moduleId] = module;
+      module.onRegister();
     }
   }
   
-  void subscribe(String channel, String topic, String moduleId) {
-    Module subscriber = this._modules[moduleId];
-    if (subscriber == null) {
-      throw new Exception("no module with id${moduleId} registered!");
-    }
-    
-    final List<Module> subscriberList = this._getSubscriberList(channel, topic);
-    if (!subscriberList.contains(subscriber)) {
-      subscriberList.add(subscriber);
+  void unregister(String moduleId) {
+    if (!this._modules.containsKey(moduleId)) {
+      throw new Exception("no module with id ${moduleId} registered");
     }
     else {
-      throw new Exception("module has already subscribed to channel:topic ${channel}:${topic}");
+      this._modules[moduleId].onUnregister();
+      this._modules.remove(moduleId);
     }
   }
   
-  void unsubscribe(String channel, String topic, String moduleId) {
-    Module subscriber = this._modules[moduleId];
-    if (subscriber == null) {
-      throw new Exception("no module with id${moduleId} registered!");
+  void start(modules) {
+    var ids = new List<String>();
+    if (modules is String) {
+      ids.add(modules);
     }
-    
-    final List<Module> subscriberList = this._getSubscriberList(channel, topic);
-    if (subscriberList.contains(subscriber)) {
-      subscriberList.remove(subscriber);
+    else if (modules is List) {
+      ids = modules;
     }
     else {
-      throw new Exception("module has already unsubscribed to channel:topic ${channel}:${topic}");
+      throw new TypeError("only List<String> and String arguments are allowed");
+    }
+    
+    for (String moduleId in ids) {
+      if (this._modules.containsKey(moduleId)) {
+        this._modules[moduleId].onStart();
+      }
+    }
+  }
+  
+  void stop(modules) {
+    var ids = new List<String>();
+    if (modules is String) {
+      ids.add(modules);
+    }
+    else if (modules is List) {
+      ids = modules;
+    }
+    else {
+      throw new TypeError("only List<String> and String arguments are allowed");
+    }
+    
+    for (String moduleId in ids) {
+      if (this._modules.containsKey(moduleId)) {
+        this._modules[moduleId].onStop();
+      }
+    }
+  }
+  
+  ChannelSubscribtion subscribe(String channel, String topic, Function onMessageHandler) {
+    final ChannelSubscribtion subscription = new ChannelSubscribtion(this, channel, topic, onMessageHandler);
+    this._getSubscriberList(channel, topic).add(subscription);
+    
+    return subscription;
+  }
+  
+  void unsubscribe(String channel, String topic, ChannelSubscribtion subscription) {
+    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(channel, topic);
+    if (subscriberList.contains(subscription)) {
+      subscriberList.remove(subscription);
     }
   }
  
-  void publish(String channel, String topic, data) {
-    final List<Module> subscriberList = this._getSubscriberList(channel, topic);
-    for (Module subscriber in subscriberList) {
-      subscriber.onMessage(channel, topic, data);
+  void emit(String channel, String topic, dynamic data) {
+    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(channel, topic);
+    for (ChannelSubscribtion subscriber in subscriberList) {
+      if (!subscriber.paused) {
+        subscriber.message(data);
+      }
     }
   }
   
-  List<Module> _getSubscriberList(String channel, String topic) {
-    Map<String, List<Module>> topicMap;
+  List<ChannelSubscribtion> _getSubscriberList(String channel, String topic) {
+    Map<String, List<ChannelSubscribtion>> topicMap;
     if (_subscriptions.containsKey(channel)) {
       topicMap = _subscriptions[channel];
     }
     else {
-      topicMap = new Map<String, List<Module>>();
+      topicMap = new Map<String, List<ChannelSubscribtion>>();
       _subscriptions[channel] = topicMap;
     }
     
-    List<Module> subscriberList;
+    List<ChannelSubscribtion> subscriberList;
     if (topicMap.containsKey(topic)) {
       subscriberList = topicMap[topic];
     }
     else {
-      subscriberList = new List<Module>();
+      subscriberList = new List<ChannelSubscribtion>();
       topicMap[topic] = subscriberList;
     }
     
     return subscriberList;
+  }
+}
+
+class ChannelSubscribtion {
+  
+  Context _context;
+  Function _onMessageHandler;
+  String _channel;
+  String _topic;
+  bool paused;
+  
+  ChannelSubscribtion(Context this._context, String this._channel, 
+      String this._topic, Function this._onMessageHandler);
+  
+  void message(dynamic data) {
+    this._onMessageHandler(data);
+  }
+  
+  void pause() {
+    this.paused = true;
+  }
+  
+  void resume() {
+    this.paused = false;
+  }
+  
+  void unsubscribe () {
+    this._context.unsubscribe(this._channel, this._topic, this);
   }
 }
 
@@ -84,7 +147,7 @@ abstract class Module {
   
   void onMessage(String channel, String topic, data);
   void onStop();
-  void onDestroy();
-  void onCreate();
+  void onUnregister();
+  void onRegister();
   void onStart();
 }

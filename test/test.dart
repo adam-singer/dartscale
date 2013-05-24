@@ -4,74 +4,156 @@ import '../lib/dartscale.dart';
 class TestModule extends Module {
   
   var lastReceivedMessage;
-  
-  void onMessage(String channel, String topic, data) {
-    this.lastReceivedMessage = data;
-  }
+  var registered;
+  var unregistered;
+  var started;
+  var stopped;
   
   TestModule(Context context):super(context);
+  
+  void onRegister() {
+    this.registered = true;
+    this.unregistered = false;
+  }
+  
+  void onUnregister() {
+    this.registered = false;
+    this.unregistered = true;
+  }
+  
+  void onStart() {
+    this.started = true;
+    this.stopped = false;
+  }
+  
+  void onStop() {
+    this.stopped = true;
+    this.started = false;
+  }
 }
 
 void main () {
   test("Module registered", () {
     var context = new Context();
     var testModule = new TestModule(context);
-    context.registerModule("TestModule", testModule);
+    context.register("TestModule", testModule);
     
     expect(context.modules.containsKey("TestModule"), equals(true));
+    expect(testModule.registered, equals(true));
   });
   
-  test("Module subscribed", () {
+  test("Module unregistered", () {
     var context = new Context();
     var testModule = new TestModule(context);
-    context.registerModule("TestModule", testModule);
-    context.subscribe("channel1", "topic1", "TestModule");
-    context.subscribe("channel2", "topic2", "TestModule");
+    context.register("TestModule", testModule);
+    context.unregister("TestModule");
     
-    var subscribedModules = context.subscriptions["channel1"]["topic1"];
-    expect(subscribedModules.contains(testModule), equals(true));
-    subscribedModules = context.subscriptions["channel2"]["topic2"];
-    expect(subscribedModules.contains(testModule), equals(true));
+    expect(context.modules.containsKey("TestModule"), equals(false));
+    expect(testModule.unregistered, equals(true));
   });
   
-  test("Module unsubscribed", () {
+  test("single Module started", () {
     var context = new Context();
     var testModule = new TestModule(context);
-    context.registerModule("TestModule", testModule);
-    context.subscribe("channel1", "topic1", "TestModule");
-    context.subscribe("channel2", "topic2", "TestModule");
-    context.unsubscribe("channel1", "topic1", "TestModule");
-    context.unsubscribe("channel2", "topic2", "TestModule");
+    context.register("TestModule", testModule);
+    context.start("TestModule");
     
-    var subscribedModules = context.subscriptions["channel1"]["topic1"];
-    expect(subscribedModules.contains(testModule), equals(false));
-    subscribedModules = context.subscriptions["channel2"]["topic2"];
-    expect(subscribedModules.contains(testModule), equals(false));
-    
-    var data1 = "data1";
-    context.publish("channel1", "topic1", data1);
-    expect(testModule.lastReceivedMessage, equals(null));
-    
-    var data2 = "data2";
-    context.publish("channel2", "topic2", data2);
-    expect(testModule.lastReceivedMessage, equals(null));
+    expect(testModule.started, equals(true));
   });
   
-  test("Module received Message", () {
+  test("single Module stoped", () {
     var context = new Context();
     var testModule = new TestModule(context);
-    context.registerModule("TestModule", testModule);
-    context.subscribe("channel1", "topic1", "TestModule");
-    context.subscribe("channel2", "topic2", "TestModule");
+    context.register("TestModule", testModule);
+    context.stop("TestModule");
     
-    var data1 = "data1";
-    context.publish("channel1", "topic1", data1);
-    expect(testModule.lastReceivedMessage, equals(data1));
+    expect(testModule.stopped, equals(true));
+  });
+  
+  test("multiple Modules started", () {
+    var context = new Context();
+    var testModule1 = new TestModule(context);
+    var testModule2 = new TestModule(context);
+    var testModule3 = new TestModule(context);
+    context.register("TestModule1", testModule1);
+    context.register("TestModule2", testModule2);
+    context.register("TestModule3", testModule3);
+    context.start(["TestModule1", "TestModule2", "TestModule3"]);
     
-    var data2 = "data2";
-    context.publish("channel2", "topic2", data2);
-    expect(testModule.lastReceivedMessage, equals(data2));
+    expect(testModule1.started, equals(true));
+    expect(testModule2.started, equals(true));
+    expect(testModule3.started, equals(true));
+  });
+  
+  test("multiple Modules stoped", () {
+    var context = new Context();
+    var testModule1 = new TestModule(context);
+    var testModule2 = new TestModule(context);
+    var testModule3 = new TestModule(context);
+    context.register("TestModule1", testModule1);
+    context.register("TestModule2", testModule2);
+    context.register("TestModule3", testModule3);
+    context.stop(["TestModule1", "TestModule2", "TestModule3"]);
     
+    expect(testModule1.stopped, equals(true));
+    expect(testModule2.stopped, equals(true));
+    expect(testModule3.stopped, equals(true));
+  });
+  
+  test("receives Message", () {
+    var context = new Context();
+    var received = null;
+    
+    var subscription = context.subscribe("channel", "topic", (dynamic data){
+      received = data;
+    });
+    
+    context.emit("channel", "topic", "blabla");
+    
+    expect(received, equals("blabla"));
+  });
+  
+  test("subscription paused", () {
+    var context = new Context();
+    var received = null;
+    
+    var subscription = context.subscribe("channel", "topic", (dynamic data){
+      received = data;
+    });
+    subscription.pause();
+    
+    context.emit("channel", "topic", "blabla");
+    
+    expect(received, equals(null));
+  });
+  
+  test("subscription resumed", () {
+    var context = new Context();
+    var received = null;
+    
+    var subscription = context.subscribe("channel", "topic", (dynamic data){
+      received = data;
+    });
+    subscription.resume();
+    
+    context.emit("channel", "topic", "blabla");
+    
+    expect(received, equals("blabla"));
+  });
+  
+  test("subscription unsubscribed", () {
+    var context = new Context();
+    var received = null;
+    
+    var subscription = context.subscribe("channel", "topic", (dynamic data){
+      received = data;
+    });
+    
+    subscription.unsubscribe();
+    
+    context.emit("channel", "topic", "blabla");
+    
+    expect(received, equals(null));
   });
 }
 
