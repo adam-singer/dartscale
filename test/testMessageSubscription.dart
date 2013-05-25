@@ -33,7 +33,7 @@ class TestModule extends Module {
 }
 
 void main () {
-  test("receives Message", () {
+  test("receives Message with data", () {
     var context = new Context();
     var received = null;
     
@@ -44,6 +44,19 @@ void main () {
     context.emit("channel", "topic", "blabla");
     
     expect(received, equals("blabla"));
+  });
+  
+  test("receives Message without data", () {
+    var context = new Context();
+    var received = null;
+    
+    var subscription = context.subscribe("channel", "topic", ([dynamic data]){
+      received = data;
+    });
+    
+    context.emit("channel", "topic");
+    
+    expect(received, equals(null));
   });
   
   test("subscription paused", () {

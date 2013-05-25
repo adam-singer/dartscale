@@ -1,11 +1,15 @@
 part of dartscale;
 
+/**
+ * Context in which [Module]s live.
+ * 
+ * An application can consist of multiple contexts.
+ */
 class Context {
   Map<String, Module>   _modules = new Map<String, Module>();
   Map<String, Module>   get modules => this._modules;
   
   Map<String, Map<String, List<ChannelSubscribtion>>> _subscriptions = new Map<String, Map<String, List<ChannelSubscribtion>>>();
-  Map<String, Map<String, List<ChannelSubscribtion>>> get subscriptions => this._subscriptions;
   
   void register(String moduleId, Module module) {
     if (this._modules.containsKey(moduleId)) {
@@ -92,12 +96,32 @@ class Context {
       subscriberList.remove(subscription);
     }
   }
+  
+  void pause( ChannelSubscribtion subscription) {
+    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(subscription.channel, subscription.topic);
+    if (subscriberList.contains(subscription)) {
+      subscriberList.remove(subscription);
+    }
+  }
+  
+  void resume( ChannelSubscribtion subscription) {
+    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(subscription.channel, subscription.topic);
+    if (!subscriberList.contains(subscription)) {
+      subscriberList.add(subscription);
+    }
+  }
  
-  void emit(String channel, String topic, dynamic data) {
+  void emit(String channel, String topic, [dynamic data]) {
     final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(channel, topic);
     for (ChannelSubscribtion subscriber in subscriberList) {
       if (!subscriber.paused) {
-        subscriber.message(data);
+        if (data != null) {
+          subscriber.message(data);
+        }
+        else {
+          subscriber.message();
+        }
+        
       }
     }
   }
