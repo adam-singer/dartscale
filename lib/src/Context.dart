@@ -1,8 +1,8 @@
 part of dartscale;
 
 class Context {
-  Map<String, Module>                     _modules = new Map<String, Module>();
-  Map<String, Module>                    get modules => this._modules;
+  Map<String, Module>   _modules = new Map<String, Module>();
+  Map<String, Module>   get modules => this._modules;
   
   Map<String, Map<String, List<ChannelSubscribtion>>> _subscriptions = new Map<String, Map<String, List<ChannelSubscribtion>>>();
   Map<String, Map<String, List<ChannelSubscribtion>>> get subscriptions => this._subscriptions;
@@ -27,17 +27,24 @@ class Context {
     }
   }
   
-  void start(modules) {
+  void start([modules]) {
     var ids = new List<String>();
-    if (modules is String) {
-      ids.add(modules);
-    }
-    else if (modules is List) {
-      ids = modules;
+    
+    if (modules != null) {
+      if (modules is String) {
+        ids.add(modules);
+      }
+      else if (modules is List) {
+        ids = modules;
+      }
+      else {
+        throw new TypeError("only List<String> and String arguments are allowed");
+      }
     }
     else {
-      throw new TypeError("only List<String> and String arguments are allowed");
+      ids = this._modules.keys;
     }
+    
     
     for (String moduleId in ids) {
       if (this._modules.containsKey(moduleId)) {
@@ -46,17 +53,24 @@ class Context {
     }
   }
   
-  void stop(modules) {
+  void stop([modules]) {
     var ids = new List<String>();
-    if (modules is String) {
-      ids.add(modules);
-    }
-    else if (modules is List) {
-      ids = modules;
+    
+    if (modules != null) {
+      if (modules is String) {
+        ids.add(modules);
+      }
+      else if (modules is List) {
+        ids = modules;
+      }
+      else {
+        throw new TypeError("only List<String> and String arguments are allowed");
+      }
     }
     else {
-      throw new TypeError("only List<String> and String arguments are allowed");
+      ids = this._modules.keys;
     }
+    
     
     for (String moduleId in ids) {
       if (this._modules.containsKey(moduleId)) {
