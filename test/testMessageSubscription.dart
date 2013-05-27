@@ -37,69 +37,13 @@ void main () {
     var context = new Context();
     var received = null;
     
-    var subscription = context.subscribe("channel", "topic", (dynamic data){
+    var subscription = context.getStream("channel", "topic").listen((dynamic data){
       received = data;
     });
     
     context.emit("channel", "topic", "blabla");
     
     expect(received, equals("blabla"));
-  });
-  
-  test("receives Message without data", () {
-    var context = new Context();
-    var received = null;
-    
-    var subscription = context.subscribe("channel", "topic", ([dynamic data]){
-      received = data;
-    });
-    
-    context.emit("channel", "topic");
-    
-    expect(received, equals(null));
-  });
-  
-  test("subscription paused", () {
-    var context = new Context();
-    var received = null;
-    
-    var subscription = context.subscribe("channel", "topic", (dynamic data){
-      received = data;
-    });
-    subscription.pause();
-    
-    context.emit("channel", "topic", "blabla");
-    
-    expect(received, equals(null));
-  });
-  
-  test("subscription resumed", () {
-    var context = new Context();
-    var received = null;
-    
-    var subscription = context.subscribe("channel", "topic", (dynamic data){
-      received = data;
-    });
-    subscription.resume();
-    
-    context.emit("channel", "topic", "blabla");
-    
-    expect(received, equals("blabla"));
-  });
-  
-  test("subscription unsubscribed", () {
-    var context = new Context();
-    var received = null;
-    
-    var subscription = context.subscribe("channel", "topic", (dynamic data){
-      received = data;
-    });
-    
-    subscription.unsubscribe();
-    
-    context.emit("channel", "topic", "blabla");
-    
-    expect(received, equals(null));
   });
 }
 

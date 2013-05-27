@@ -9,7 +9,7 @@ class Context {
   Map<String, Module>   _modules = new Map<String, Module>();
   Map<String, Module>   get modules => this._modules;
   
-  Map<String, Map<String, List<ChannelSubscribtion>>> _subscriptions = new Map<String, Map<String, List<ChannelSubscribtion>>>();
+  Map<String, Map<String, StreamController>> _streams = new Map<String, Map<String, StreamController>>();
   
   void register(String moduleId, Module module) {
     if (this._modules.containsKey(moduleId)) {
@@ -83,68 +83,37 @@ class Context {
     }
   }
   
-  ChannelSubscribtion subscribe(String channel, String topic, Function onMessageHandler) {
-    final ChannelSubscribtion subscription = new ChannelSubscribtion(this, channel, topic, onMessageHandler);
-    this._getSubscriberList(channel, topic).add(subscription);
-    
-    return subscription;
-  }
   
-  void unsubscribe(String channel, String topic, ChannelSubscribtion subscription) {
-    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(channel, topic);
-    if (subscriberList.contains(subscription)) {
-      subscriberList.remove(subscription);
-    }
-  }
-  
-  void pause( ChannelSubscribtion subscription) {
-    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(subscription.channel, subscription.topic);
-    if (subscriberList.contains(subscription)) {
-      subscriberList.remove(subscription);
-    }
-  }
-  
-  void resume( ChannelSubscribtion subscription) {
-    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(subscription.channel, subscription.topic);
-    if (!subscriberList.contains(subscription)) {
-      subscriberList.add(subscription);
-    }
-  }
  
-  void emit(String channel, String topic, [dynamic data]) {
-    final List<ChannelSubscribtion> subscriberList = this._getSubscriberList(channel, topic);
-    for (ChannelSubscribtion subscriber in subscriberList) {
-      if (!subscriber.paused) {
-        if (data != null) {
-          subscriber.message(data);
-        }
-        else {
-          subscriber.message();
-        }
-        
-      }
-    }
+  void emit(String channel, String topic, dynamic data) {
+    final StreamController controller = getStreamController(channel, topic);
+    controller.add(data);    
   }
   
-  List<ChannelSubscribtion> _getSubscriberList(String channel, String topic) {
-    Map<String, List<ChannelSubscribtion>> topicMap;
-    if (_subscriptions.containsKey(channel)) {
-      topicMap = _subscriptions[channel];
+  StreamController getStreamController(String channel, String topic) {
+    Map<String, StreamController> topicMap;
+    if (_streams.containsKey(channel)) {
+      topicMap = _streams[channel];
     }
     else {
-      topicMap = new Map<String, List<ChannelSubscribtion>>();
-      _subscriptions[channel] = topicMap;
+      topicMap = new Map<String, StreamController>();
+      _streams[channel] = topicMap;
     }
     
-    List<ChannelSubscribtion> subscriberList;
+    StreamController stream;
     if (topicMap.containsKey(topic)) {
-      subscriberList = topicMap[topic];
+      stream = topicMap[topic];
     }
     else {
-      subscriberList = new List<ChannelSubscribtion>();
-      topicMap[topic] = subscriberList;
+      stream = new StreamController();
+      topicMap[topic] = stream;
     }
     
-    return subscriberList;
+    return stream;
+  }
+  
+  Stream getStream(String channel, String topic) {
+    
+    return this.getStreamController(channel, topic).stream;
   }
 }

@@ -6,7 +6,6 @@ abstract class Module {
   
   Module(Context this.context);
   
-  void onMessage(String channel, String topic, data);
   void onStop() {}
   void onUnregister() {}
   void onRegister() {}
