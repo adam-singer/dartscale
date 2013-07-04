@@ -1,0 +1,81 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Mediator class / dartscale Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="dartscale" data-type="Mediator">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../dartscale.html">dartscale</a> &rsaquo; <a href="../dartscale/Mediator.html">Mediator</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Mediator</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class Mediator {
+ 
+ var _channels = new Map&lt;String, MediatorChannel&gt;();
+ 
+ MediatorChannel operator [](String channelName) {
+   var channel = _channels[channelName];
+   if (channel == null) {
+     channel = new MediatorChannel();
+     _channels[channelName] = channel;
+   }
+   
+   return channel;
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Operators</h3>
+<div class="method"><h4 id="[]">
+<button class="show-code">Code</button>
+<a href="../dartscale/MediatorChannel.html">MediatorChannel</a> <strong>operator []</strong>(String channelName) <a class="anchor-link" href="#[]"
+              title="Permalink to Mediator.operator []">#</a></h4>
+<div class="doc">
+<pre class="source">
+MediatorChannel operator [](String channelName) {
+ var channel = _channels[channelName];
+ if (channel == null) {
+   channel = new MediatorChannel();
+   _channels[channelName] = channel;
+ }
+ 
+ return channel;
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-07-05 01:17:32.681</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

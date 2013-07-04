@@ -2,5 +2,5 @@ library dartscale;
 
 import 'dart:async';
 
-part 'src/Context.dart';
-part 'src/Module.dart';
+part 'src/Core.dart';
+part 'src/Mediator.dart';
