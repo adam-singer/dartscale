@@ -1,0 +1,87 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>MediatorTopic class / dartscale Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="dartscale" data-type="MediatorTopic">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../dartscale.html">dartscale</a> &rsaquo; <a href="../dartscale/MediatorTopic.html">MediatorTopic</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>MediatorTopic</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class MediatorTopic {
+ 
+ StreamController _streamController = new StreamController.broadcast(sync: true);
+ 
+ StreamSubscription listen(void onData(dynamic event), 
+                           {void onError(error), void onDone(), bool cancelOnError}){
+   return this._streamController.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+ }
+ 
+ void add(dynamic event) {
+   this._streamController.add(event);
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="add">
+<button class="show-code">Code</button>
+void <strong>add</strong>(event) <a class="anchor-link" href="#add"
+              title="Permalink to MediatorTopic.add">#</a></h4>
+<div class="doc">
+<pre class="source">
+void add(dynamic event) {
+ this._streamController.add(event);
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="listen">
+<button class="show-code">Code</button>
+StreamSubscription <strong>listen</strong>(void onData(event), {void onError(error), void onDone(), bool cancelOnError}) <a class="anchor-link" href="#listen"
+              title="Permalink to MediatorTopic.listen">#</a></h4>
+<div class="doc">
+<pre class="source">
+StreamSubscription listen(void onData(dynamic event), 
+                         {void onError(error), void onDone(), bool cancelOnError}){
+ return this._streamController.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-07-16 00:52:18.646</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

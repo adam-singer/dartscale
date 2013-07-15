@@ -35,16 +35,16 @@
 <pre class="source">
 class MediatorChannel {
  
- var _topics = new Map&lt;String, StreamController&gt;();
+ var _topics = new Map&lt;String, MediatorTopic&gt;();
  
- StreamController operator [](String topicName) {
-   StreamController stream = _topics[topicName];
-   if (stream == null) {
-     stream = new StreamController();
-     _topics[topicName] = stream;
+ MediatorTopic operator [](String topicName) {
+   MediatorTopic topic = _topics[topicName];
+   if (topic == null) {
+     topic = new MediatorTopic();
+     _topics[topicName] = topic;
    }
    
-   return stream;
+   return topic;
  }
 }
 </pre>
@@ -53,18 +53,18 @@ class MediatorChannel {
 <h3>Operators</h3>
 <div class="method"><h4 id="[]">
 <button class="show-code">Code</button>
-StreamController <strong>operator []</strong>(String topicName) <a class="anchor-link" href="#[]"
+<a href="../dartscale/MediatorTopic.html">MediatorTopic</a> <strong>operator []</strong>(String topicName) <a class="anchor-link" href="#[]"
               title="Permalink to MediatorChannel.operator []">#</a></h4>
 <div class="doc">
 <pre class="source">
-StreamController operator [](String topicName) {
- StreamController stream = _topics[topicName];
- if (stream == null) {
-   stream = new StreamController();
-   _topics[topicName] = stream;
+MediatorTopic operator [](String topicName) {
+ MediatorTopic topic = _topics[topicName];
+ if (topic == null) {
+   topic = new MediatorTopic();
+   _topics[topicName] = topic;
  }
  
- return stream;
+ return topic;
 }
 </pre>
 </div>
@@ -74,7 +74,7 @@ StreamController operator [](String topicName) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-07-05 01:17:32.690</div>
+          <div>This page was generated at 2013-07-16 00:52:18.640</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>
