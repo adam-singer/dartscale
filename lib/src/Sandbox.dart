@@ -32,5 +32,13 @@ class Sandbox {
   static void registerPlugin(String name, dynamic plugin) {
     _plugins[new Symbol(name)] = plugin;
   }
+}
+
+class NoSuchPluginError implements Exception {
   
+  String message;
+  
+  NoSuchPluginError(String pluginName) {
+    this.message = "No plugin named ${pluginName} found!";
+  }
 }
