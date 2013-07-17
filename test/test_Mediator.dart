@@ -6,17 +6,17 @@ void main () {
     var mediator = new Mediator();
     var receivedCount = 0;
     
-    mediator["channel"]["topic"].listen((data){
+    mediator.channel("channel").topic("topic").listen((data){
       expect(data, equals("blabla"));
       receivedCount++;
     });
     
-    mediator["channel"]["topic"].listen((data){
+    mediator.channel("channel").topic("topic").listen((data){
       expect(data, equals("blabla"));
       receivedCount++;
     });
     
-    mediator["channel"]["topic"].add("blabla");
+    mediator.channel("channel").topic("topic").add("blabla");
     
     expect(receivedCount, equals(2));
   });
@@ -25,19 +25,19 @@ void main () {
     var mediator = new Mediator();
     var receivedCount = 0;
     
-    var subscription = mediator["channel"]["topic"].listen((data){
+    var subscription = mediator.channel("channel").topic("topic").listen((data){
       expect(data, equals("blabla"));
       receivedCount++;
     });
     subscription.pause();
     
-    subscription = mediator["channel"]["topic"].listen((data){
+    subscription = mediator.channel("channel").topic("topic").listen((data){
       expect(data, equals("blabla"));
       receivedCount++;
     });
     subscription.pause();
     
-    mediator["channel"]["topic"].add("blabla");
+    mediator.channel("channel").topic("topic").add("blabla");
     
     expect(receivedCount, equals(0));
   });
@@ -46,21 +46,21 @@ void main () {
     var mediator = new Mediator();
     var receivedCount = 0;
     
-    var subscription = mediator["channel"]["topic"].listen((data){
+    var subscription = mediator.channel("channel").topic("topic").listen((data){
       expect(data, equals("blabla"));
       receivedCount++;
     });
     subscription.pause();
     subscription.resume();
     
-    subscription = mediator["channel"]["topic"].listen((data){
+    subscription = mediator.channel("channel").topic("topic").listen((data){
       expect(data, equals("blabla"));
       receivedCount++;
     });
     subscription.pause();
     subscription.resume();
     
-    mediator["channel"]["topic"].add("blabla");
+    mediator.channel("channel").topic("topic").add("blabla");
     
     expect(receivedCount, equals(2));
   });

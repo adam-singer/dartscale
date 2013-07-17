@@ -20,7 +20,7 @@ class MediatorChannel {
   
   var _topics = new Map<String, MediatorTopic>();
   
-  MediatorTopic operator [](String topicName) {
+  MediatorTopic topic(String topicName) {
     MediatorTopic topic = _topics[topicName];
     if (topic == null) {
       topic = new MediatorTopic();
@@ -35,7 +35,7 @@ class Mediator {
   
   var _channels = new Map<String, MediatorChannel>();
   
-  MediatorChannel operator [](String channelName) {
+  MediatorChannel channel(String channelName) {
     var channel = _channels[channelName];
     if (channel == null) {
       channel = new MediatorChannel();
