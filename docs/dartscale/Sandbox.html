@@ -1,0 +1,163 @@
+        <!DOCTYPE html>
+        <html>
+        <head>
+                <meta charset="utf-8">
+        <title>Sandbox class / dartscale Library / Dart Documentation</title>
+        <link rel="stylesheet" type="text/css"
+            href="../styles.css">
+        <link href="//fonts.googleapis.com/css?family=Open+Sans:400,600,700,800" rel="stylesheet" type="text/css">
+        <link rel="shortcut icon" href="../favicon.ico">
+        
+        </head>
+        <body data-library="dartscale" data-type="Sandbox">
+        <div class="page">
+        <div class="header">
+          <a href="../index.html"><div class="logo"></div></a>
+          <a href="../index.html">Dart Documentation</a>
+         &rsaquo; <a href="../dartscale.html">dartscale</a> &rsaquo; <a href="../dartscale/Sandbox.html">Sandbox</a>        <div id="search-box">
+          <input type="search" name="q" id="q" autocomplete="off"
+              class="search-input" placeholder="Search API">
+        </div>
+        
+      </div>
+      <div class="drop-down" id="drop-down"></div>
+      
+        <div class="nav">
+        
+</div>
+<div class="content">
+        <h2><strong>Sandbox</strong>
+          class
+        </h2>
+        
+<button id="show-inherited" class="show-inherited">Hide inherited</button>
+<div class="doc">
+<pre class="source">
+class Sandbox {
+ 
+ static Map&lt;Symbol, dynamic&gt; _plugins = new Map&lt;Symbol, dynamic&gt;();
+ 
+ Mediator mediator;
+ 
+ Sandbox(Mediator this.mediator);
+ 
+ dynamic noSuchMethod(Invocation invocation) {
+     var plugin = _plugins[invocation.memberName];
+     
+     if (invocation.isSetter) {
+       throw new UnsupportedError("Setting Plugins is not allowed!");
+     }
+     
+     if (plugin == null) {
+       throw new NoSuchPluginError(invocation.memberName.toString());
+     }
+     
+     if (invocation.isGetter || invocation.isAccessor) {
+       return plugin;
+     }
+     else if (invocation.isMethod) {
+       return Function.apply(plugin, invocation.positionalArguments, invocation.namedArguments);
+     }
+     
+     
+ }
+ 
+ static void registerPlugin(String name, dynamic plugin) {
+   _plugins[new Symbol(name)] = plugin;
+ }
+}
+</pre>
+</div>
+<div>
+<h3>Static Methods</h3>
+<div class="method"><h4 id="registerPlugin">
+<button class="show-code">Code</button>
+void <strong>registerPlugin</strong>(String name, plugin) <a class="anchor-link" href="#registerPlugin"
+              title="Permalink to Sandbox.registerPlugin">#</a></h4>
+<div class="doc">
+<pre class="source">
+static void registerPlugin(String name, dynamic plugin) {
+ _plugins[new Symbol(name)] = plugin;
+}
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Constructors</h3>
+<div class="method"><h4 id="Sandbox">
+<button class="show-code">Code</button>
+new <strong>Sandbox</strong>(<a href="../dartscale/Mediator.html">Mediator</a> mediator) <a class="anchor-link" href="#Sandbox"
+              title="Permalink to Sandbox.Sandbox">#</a></h4>
+<div class="doc">
+<pre class="source">
+Sandbox(Mediator this.mediator);
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Properties</h3>
+<div class="field"><h4 id="mediator">
+<button class="show-code">Code</button>
+<a href="../dartscale/Mediator.html">Mediator</a>         <strong>mediator</strong> <a class="anchor-link"
+            href="#mediator"
+            title="Permalink to Sandbox.mediator">#</a>
+        </h4>
+        <div class="doc">
+<pre class="source">
+Mediator mediator
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="noSuchMethod">
+<button class="show-code">Code</button>
+dynamic <strong>noSuchMethod</strong>(Invocation invocation) <a class="anchor-link" href="#noSuchMethod"
+              title="Permalink to Sandbox.noSuchMethod">#</a></h4>
+<div class="doc">
+<div class="inherited">
+<p><a class="crossref" href="../dartscale/Sandbox.html#noSuchMethod">noSuchMethod</a> is invoked when users invoke a non-existant method
+on an object. The name of the method and the arguments of the
+invocation are passed to <a class="crossref" href="../dartscale/Sandbox.html#noSuchMethod">noSuchMethod</a> in an <a class="crossref" href="../dart_core/Invocation.html">Invocation</a>.
+If <a class="crossref" href="../dartscale/Sandbox.html#noSuchMethod">noSuchMethod</a> returns a value, that value becomes the result of
+the original invocation.</p>
+<p>The default behavior of <a class="crossref" href="../dartscale/Sandbox.html#noSuchMethod">noSuchMethod</a> is to throw a
+<code>noSuchMethodError</code>.</p>
+<div class="docs-inherited-from">docs inherited from Object </div></div>
+<pre class="source">
+dynamic noSuchMethod(Invocation invocation) {
+   var plugin = _plugins[invocation.memberName];
+   
+   if (invocation.isSetter) {
+     throw new UnsupportedError("Setting Plugins is not allowed!");
+   }
+   
+   if (plugin == null) {
+     throw new NoSuchPluginError(invocation.memberName.toString());
+   }
+   
+   if (invocation.isGetter || invocation.isAccessor) {
+     return plugin;
+   }
+   else if (invocation.isMethod) {
+     return Function.apply(plugin, invocation.positionalArguments, invocation.namedArguments);
+   }
+   
+   
+}
+</pre>
+</div>
+</div>
+</div>
+        </div>
+        <div class="clear"></div>
+        </div>
+        <div class="footer">
+          <div>This page was generated at 2013-07-18 00:43:59.045</div>
+        </div>
+        <script async src="../client-live-nav.js"></script>
+        </body></html>
+        

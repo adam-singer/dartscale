@@ -35,8 +35,79 @@
 <pre class="source">
 class Core {
  
- var mediator = new Mediator();
+ final Map&lt;Symbol, ClassMirror&gt; _registeredModules = new Map&lt;Symbol, ClassMirror&gt;();
+ final Map&lt;Symbol, dynamic&gt; _runningModules = new Map&lt;Symbol, dynamic&gt;();
  
+ final Mediator mediator = new Mediator();
+ 
+ void register(dynamic module, [String moduleName = null]) {
+   final uniqueModuleName = moduleName != null ? moduleName : module.runtimeType.toString();
+   final Symbol uniqueModuleIdentifier = new Symbol(uniqueModuleName);
+   
+   if (_registeredModules.containsKey(uniqueModuleName)) {
+     throw new StateError("Module ${moduleName} already registered!");
+   }
+   
+   final ClassMirror mirror = reflect(module).type;
+   _registeredModules[uniqueModuleIdentifier] = mirror;
+ }
+ 
+ void unregister(String moduleName) {
+   final Symbol uniqueModuleIdentifier = new Symbol(moduleName);
+   
+   if (!_registeredModules.containsKey(uniqueModuleIdentifier)) {
+     throw new StateError("Module ${moduleName} not registered!");
+   }
+   
+   _registeredModules.remove(uniqueModuleIdentifier);
+ }
+ 
+ void start(String moduleName, [String id = null, dynamic options = null]) {
+   if (!_registeredModules.containsKey(new Symbol(moduleName))) {
+     throw new StateError("Module ${moduleName} not registered!");
+   }
+   
+   final ClassMirror mirror = _registeredModules[new Symbol(moduleName)];
+   final Symbol moduleId = id != null ? new Symbol(id) : mirror.simpleName;
+   final Sandbox sandbox = new Sandbox(this.mediator);
+   
+   if (_runningModules.containsKey(moduleId)) {
+     throw new StateError("Module with id #${moduleId} already running!");
+   }
+   
+   final InstanceMirror moduleInstance = mirror.newInstance(new Symbol(''), [sandbox], null);
+   moduleInstance.invoke(new Symbol("start"), [options]);
+   
+   _runningModules[moduleId] = moduleInstance;
+ }
+ 
+ void stop(String moduleId) {
+   final Symbol uniqueModuleIdentifier = new Symbol(moduleId);
+   
+   if (!_runningModules.containsKey(uniqueModuleIdentifier)) {
+     throw new StateError("Module with id #${moduleId} not running!");
+   }
+   
+   _runningModules.remove(uniqueModuleIdentifier).stop();
+ }
+ 
+ dynamic registered([String moduleName = null]) {
+   if (moduleName != null) {
+     return _registeredModules.containsKey(new Symbol(moduleName));
+   }
+   else {
+     return _registeredModules.keys;
+   }
+ }
+ 
+ dynamic running([String moduleId = null]) {
+   if (moduleId != null) {
+     return _runningModules.containsKey(new Symbol(moduleId));
+   }
+   else {
+     return _runningModules.keys;
+   }
+ }
 }
 </pre>
 </div>
@@ -44,13 +115,133 @@ class Core {
 <h3>Properties</h3>
 <div class="field"><h4 id="mediator">
 <button class="show-code">Code</button>
-var         <strong>mediator</strong> <a class="anchor-link"
+final <a href="../dartscale/Mediator.html">Mediator</a>         <strong>mediator</strong> <a class="anchor-link"
             href="#mediator"
             title="Permalink to Core.mediator">#</a>
         </h4>
         <div class="doc">
 <pre class="source">
-var mediator = new Mediator()
+final Mediator mediator = new Mediator()
+</pre>
+</div>
+</div>
+</div>
+<div>
+<h3>Methods</h3>
+<div class="method"><h4 id="register">
+<button class="show-code">Code</button>
+void <strong>register</strong>(module, [String moduleName = null]) <a class="anchor-link" href="#register"
+              title="Permalink to Core.register">#</a></h4>
+<div class="doc">
+<pre class="source">
+void register(dynamic module, [String moduleName = null]) {
+ final uniqueModuleName = moduleName != null ? moduleName : module.runtimeType.toString();
+ final Symbol uniqueModuleIdentifier = new Symbol(uniqueModuleName);
+ 
+ if (_registeredModules.containsKey(uniqueModuleName)) {
+   throw new StateError("Module ${moduleName} already registered!");
+ }
+ 
+ final ClassMirror mirror = reflect(module).type;
+ _registeredModules[uniqueModuleIdentifier] = mirror;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="registered">
+<button class="show-code">Code</button>
+dynamic <strong>registered</strong>([String moduleName = null]) <a class="anchor-link" href="#registered"
+              title="Permalink to Core.registered">#</a></h4>
+<div class="doc">
+<pre class="source">
+dynamic registered([String moduleName = null]) {
+ if (moduleName != null) {
+   return _registeredModules.containsKey(new Symbol(moduleName));
+ }
+ else {
+   return _registeredModules.keys;
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="running">
+<button class="show-code">Code</button>
+dynamic <strong>running</strong>([String moduleId = null]) <a class="anchor-link" href="#running"
+              title="Permalink to Core.running">#</a></h4>
+<div class="doc">
+<pre class="source">
+dynamic running([String moduleId = null]) {
+ if (moduleId != null) {
+   return _runningModules.containsKey(new Symbol(moduleId));
+ }
+ else {
+   return _runningModules.keys;
+ }
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="start">
+<button class="show-code">Code</button>
+void <strong>start</strong>(String moduleName, [String id = null, options = null]) <a class="anchor-link" href="#start"
+              title="Permalink to Core.start">#</a></h4>
+<div class="doc">
+<pre class="source">
+void start(String moduleName, [String id = null, dynamic options = null]) {
+ if (!_registeredModules.containsKey(new Symbol(moduleName))) {
+   throw new StateError("Module ${moduleName} not registered!");
+ }
+ 
+ final ClassMirror mirror = _registeredModules[new Symbol(moduleName)];
+ final Symbol moduleId = id != null ? new Symbol(id) : mirror.simpleName;
+ final Sandbox sandbox = new Sandbox(this.mediator);
+ 
+ if (_runningModules.containsKey(moduleId)) {
+   throw new StateError("Module with id #${moduleId} already running!");
+ }
+ 
+ final InstanceMirror moduleInstance = mirror.newInstance(new Symbol(''), [sandbox], null);
+ moduleInstance.invoke(new Symbol("start"), [options]);
+ 
+ _runningModules[moduleId] = moduleInstance;
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="stop">
+<button class="show-code">Code</button>
+void <strong>stop</strong>(String moduleId) <a class="anchor-link" href="#stop"
+              title="Permalink to Core.stop">#</a></h4>
+<div class="doc">
+<pre class="source">
+void stop(String moduleId) {
+ final Symbol uniqueModuleIdentifier = new Symbol(moduleId);
+ 
+ if (!_runningModules.containsKey(uniqueModuleIdentifier)) {
+   throw new StateError("Module with id #${moduleId} not running!");
+ }
+ 
+ _runningModules.remove(uniqueModuleIdentifier).stop();
+}
+</pre>
+</div>
+</div>
+<div class="method"><h4 id="unregister">
+<button class="show-code">Code</button>
+void <strong>unregister</strong>(String moduleName) <a class="anchor-link" href="#unregister"
+              title="Permalink to Core.unregister">#</a></h4>
+<div class="doc">
+<pre class="source">
+void unregister(String moduleName) {
+ final Symbol uniqueModuleIdentifier = new Symbol(moduleName);
+ 
+ if (!_registeredModules.containsKey(uniqueModuleIdentifier)) {
+   throw new StateError("Module ${moduleName} not registered!");
+ }
+ 
+ _registeredModules.remove(uniqueModuleIdentifier);
+}
 </pre>
 </div>
 </div>
@@ -59,7 +250,7 @@ var mediator = new Mediator()
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-07-16 00:52:18.657</div>
+          <div>This page was generated at 2013-07-18 00:43:59.051</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

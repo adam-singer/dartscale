@@ -4,13 +4,10 @@ import '../lib/dartscale.dart';
 class TestModule {
   
   Sandbox sandbox;
-  bool isRunning;
   
   TestModule(Sandbox this.sandbox);
   
   void start(Sandbox sandbox) {
-    this.sandbox;
-    this.isRunning = true;
   }
   
 }
@@ -32,8 +29,8 @@ void main () {
     
     Iterable registeredModules = core.registered();
     
-    expect(registeredModules.contains("ModuleNameOne"), equals(true));
-    expect(registeredModules.contains("ModuleNameTwo"), equals(true));
+    expect(registeredModules.contains(new Symbol("ModuleNameOne")), equals(true));
+    expect(registeredModules.contains(new Symbol("ModuleNameTwo")), equals(true));
   });
   
   test("Can register Module with custom Name", () {
@@ -69,8 +66,7 @@ void main () {
     core.register(testModule);
     core.start("TestModule");
     
-    ///lots of work needs to be done
-    ///expect(core.running("TestModule"), equals(true));
+    expect(core.running("TestModule"), equals(true));
   });
 }
 

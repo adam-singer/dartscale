@@ -37,7 +37,7 @@ class MediatorChannel {
  
  var _topics = new Map&lt;String, MediatorTopic&gt;();
  
- MediatorTopic operator [](String topicName) {
+ MediatorTopic topic(String topicName) {
    MediatorTopic topic = _topics[topicName];
    if (topic == null) {
      topic = new MediatorTopic();
@@ -50,14 +50,14 @@ class MediatorChannel {
 </pre>
 </div>
 <div>
-<h3>Operators</h3>
-<div class="method"><h4 id="[]">
+<h3>Methods</h3>
+<div class="method"><h4 id="topic">
 <button class="show-code">Code</button>
-<a href="../dartscale/MediatorTopic.html">MediatorTopic</a> <strong>operator []</strong>(String topicName) <a class="anchor-link" href="#[]"
-              title="Permalink to MediatorChannel.operator []">#</a></h4>
+<a href="../dartscale/MediatorTopic.html">MediatorTopic</a> <strong>topic</strong>(String topicName) <a class="anchor-link" href="#topic"
+              title="Permalink to MediatorChannel.topic">#</a></h4>
 <div class="doc">
 <pre class="source">
-MediatorTopic operator [](String topicName) {
+MediatorTopic topic(String topicName) {
  MediatorTopic topic = _topics[topicName];
  if (topic == null) {
    topic = new MediatorTopic();
@@ -74,7 +74,7 @@ MediatorTopic operator [](String topicName) {
         <div class="clear"></div>
         </div>
         <div class="footer">
-          <div>This page was generated at 2013-07-16 00:52:18.640</div>
+          <div>This page was generated at 2013-07-18 00:43:59.008</div>
         </div>
         <script async src="../client-live-nav.js"></script>
         </body></html>

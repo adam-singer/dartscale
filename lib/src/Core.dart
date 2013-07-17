@@ -2,36 +2,40 @@ part of dartscale;
 
 class Core {
   
-  final Map<String, ClassMirror> _registeredModules = new Map<String, ClassMirror>();
-  final Map<String, dynamic> _runningModules = new Map<String, dynamic>();
+  final Map<Symbol, ClassMirror> _registeredModules = new Map<Symbol, ClassMirror>();
+  final Map<Symbol, dynamic> _runningModules = new Map<Symbol, dynamic>();
   
   final Mediator mediator = new Mediator();
   
   void register(dynamic module, [String moduleName = null]) {
-    if (_registeredModules.containsKey(moduleName)) {
+    final uniqueModuleName = moduleName != null ? moduleName : module.runtimeType.toString();
+    final Symbol uniqueModuleIdentifier = new Symbol(uniqueModuleName);
+    
+    if (_registeredModules.containsKey(uniqueModuleName)) {
       throw new StateError("Module ${moduleName} already registered!");
     }
     
     final ClassMirror mirror = reflect(module).type;
-    
-    _registeredModules[moduleName != null ? moduleName : module.runtimeType.toString()] = mirror;
+    _registeredModules[uniqueModuleIdentifier] = mirror;
   }
   
   void unregister(String moduleName) {
-    if (!_registeredModules.containsKey(moduleName)) {
+    final Symbol uniqueModuleIdentifier = new Symbol(moduleName);
+    
+    if (!_registeredModules.containsKey(uniqueModuleIdentifier)) {
       throw new StateError("Module ${moduleName} not registered!");
     }
     
-    _registeredModules.remove(moduleName);
+    _registeredModules.remove(uniqueModuleIdentifier);
   }
   
   void start(String moduleName, [String id = null, dynamic options = null]) {
-    if (!_registeredModules.containsKey(moduleName)) {
+    if (!_registeredModules.containsKey(new Symbol(moduleName))) {
       throw new StateError("Module ${moduleName} not registered!");
     }
     
-    final ClassMirror mirror = _registeredModules[moduleName];
-    final String moduleId = id != null ? id : mirror.simpleName.toString();
+    final ClassMirror mirror = _registeredModules[new Symbol(moduleName)];
+    final Symbol moduleId = id != null ? new Symbol(id) : mirror.simpleName;
     final Sandbox sandbox = new Sandbox(this.mediator);
     
     if (_runningModules.containsKey(moduleId)) {
@@ -45,16 +49,18 @@ class Core {
   }
   
   void stop(String moduleId) {
-    if (!_runningModules.containsKey(moduleId)) {
+    final Symbol uniqueModuleIdentifier = new Symbol(moduleId);
+    
+    if (!_runningModules.containsKey(uniqueModuleIdentifier)) {
       throw new StateError("Module with id #${moduleId} not running!");
     }
     
-    _runningModules.remove(moduleId).stop();
+    _runningModules.remove(uniqueModuleIdentifier).stop();
   }
   
   dynamic registered([String moduleName = null]) {
     if (moduleName != null) {
-      return _registeredModules.containsKey(moduleName);
+      return _registeredModules.containsKey(new Symbol(moduleName));
     }
     else {
       return _registeredModules.keys;
@@ -63,7 +69,7 @@ class Core {
   
   dynamic running([String moduleId = null]) {
     if (moduleId != null) {
-      return _runningModules.containsKey(moduleId);
+      return _runningModules.containsKey(new Symbol(moduleId));
     }
     else {
       return _runningModules.keys;
