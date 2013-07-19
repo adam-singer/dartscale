@@ -1,6 +1,6 @@
-#dartscale
-
 ![dartscale](https://raw.github.com/martyglaubitz/dartscale/master/example/img/Scaleapp.png) 
+
+#dartscale
 
 Is a modular clientside framework for complex applications.   
 
