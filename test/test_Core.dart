@@ -5,7 +5,7 @@ class TestModule {
   
   Sandbox sandbox;
   
-  TestModule(Sandbox this.sandbox);
+  TestModule([Sandbox this.sandbox]);
   
   void start(Sandbox sandbox) {
   }
@@ -16,7 +16,7 @@ void main () {
   test("Can register Module", () {
     Core core = new Core();
     
-    core.register(new TestModule(null));
+    core.register(new TestModule());
     
     expect(core.registered("TestModule"), equals(true));
   });
