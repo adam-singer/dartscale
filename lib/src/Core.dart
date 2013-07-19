@@ -29,13 +29,32 @@ class Core {
     _registeredModules.remove(uniqueModuleIdentifier);
   }
   
-  void start(String moduleName, [String id = null, dynamic options = null]) {
-    if (!_registeredModules.containsKey(new Symbol(moduleName))) {
+  void start([dynamic moduleName, String id, dynamic options]) {
+    if (moduleName is String) {
+      this._start(new Symbol(moduleName), id, options);
+    }
+    else if (moduleName is List) {
+      for (String name in moduleName) {
+        this._start(new Symbol(name), id, options);
+      }
+    }
+    else if (moduleName == null) {
+      for (Symbol name in _registeredModules.keys) {
+        this._start(name, id, options);
+      }
+    }
+    else {
+      throw new ArgumentError("Invalid Type given for argument moduleName");
+    }
+  }
+  
+  void _start(Symbol moduleName, [String id, dynamic options]) {
+    if (!_registeredModules.containsKey(moduleName)) {
       throw new StateError("Module ${moduleName} not registered!");
     }
     
-    final ClassMirror mirror = _registeredModules[new Symbol(moduleName)];
-    final Symbol moduleId = id != null ? new Symbol(id) : mirror.simpleName;
+    final ClassMirror mirror = _registeredModules[moduleName];
+    final Symbol moduleId = id != null ? new Symbol(id) : moduleName;
     final Sandbox sandbox = new Sandbox(this.mediator);
     
     if (_runningModules.containsKey(moduleId)) {
@@ -48,14 +67,38 @@ class Core {
     _runningModules[moduleId] = moduleInstance;
   }
   
-  void stop(String moduleId) {
-    final Symbol uniqueModuleIdentifier = new Symbol(moduleId);
-    
-    if (!_runningModules.containsKey(uniqueModuleIdentifier)) {
+  void stop([dynamic moduleId]) {
+    if (moduleId is String) {
+      this._stop(new Symbol(moduleId));
+    }
+    else if (moduleId is List) {
+      for (String id in moduleId) {
+        this._stop(new Symbol(id));
+      }
+    }
+    else if (moduleId == null) {
+      List<Symbol> ids = [];
+      
+      ///_stop manipulates HasMap, thus it'd result in an error
+      ///calling _stop in the key iteration
+      for (Symbol id in _runningModules.keys) {
+        ids.add(id);
+      }
+      
+      ids.forEach((Symbol id) => this._stop(id));
+      
+    }
+    else {
+      throw new ArgumentError("Invalid Type given for argument moduleId");
+    }
+  }
+  
+  void _stop(Symbol moduleId) {
+    if (!_runningModules.containsKey(moduleId)) {
       throw new StateError("Module with id #${moduleId} not running!");
     }
     
-    _runningModules.remove(uniqueModuleIdentifier).stop();
+    _runningModules.remove(moduleId).invoke(new Symbol("stop"), []);
   }
   
   dynamic registered([String moduleName = null]) {
