@@ -23,6 +23,26 @@ void main () {
     var result = sandbox.SP.testMethod("Hello", "World");
     expect(result, equals("Hello+World"));
   });
+  
+  test("Sandbox proxies Mediator", () {
+    var mediator = new Mediator();
+    var sandbox = new Sandbox(mediator);
+    var receivedCount = 0;
+    
+    sandbox.channel("channel").topic("topic").listen((data){
+      expect(data, equals("blabla"));
+      receivedCount++;
+    });
+    
+    sandbox.channel("channel").topic("topic").listen((data){
+      expect(data, equals("blabla"));
+      receivedCount++;
+    });
+    
+    sandbox.channel("channel").topic("topic").add("blabla");
+    
+    expect(receivedCount, equals(2));
+  });
 }
 
 class TestPlugin {

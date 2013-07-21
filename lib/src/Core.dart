@@ -7,7 +7,7 @@ class Core {
   
   final Mediator mediator = new Mediator();
   
-  void register(dynamic module, [String moduleName = null]) {
+  register(module, [String moduleName]) {
     final uniqueModuleName = moduleName != null ? moduleName : module.runtimeType.toString();
     final Symbol uniqueModuleIdentifier = new Symbol(uniqueModuleName);
     
@@ -19,7 +19,7 @@ class Core {
     _registeredModules[uniqueModuleIdentifier] = mirror;
   }
   
-  void unregister(String moduleName) {
+  unregister(String moduleName) {
     final Symbol uniqueModuleIdentifier = new Symbol(moduleName);
     
     if (!_registeredModules.containsKey(uniqueModuleIdentifier)) {
@@ -29,7 +29,7 @@ class Core {
     _registeredModules.remove(uniqueModuleIdentifier);
   }
   
-  void start([dynamic moduleName, String id, dynamic options]) {
+  start([moduleName, String id, options]) {
     if (moduleName is String) {
       this._start(new Symbol(moduleName), id, options);
     }
@@ -48,7 +48,7 @@ class Core {
     }
   }
   
-  void _start(Symbol moduleName, [String id, dynamic options]) {
+  _start(Symbol moduleName, String id, options) {
     if (!_registeredModules.containsKey(moduleName)) {
       throw new StateError("Module ${moduleName} not registered!");
     }
@@ -67,7 +67,7 @@ class Core {
     _runningModules[moduleId] = moduleInstance;
   }
   
-  void stop([dynamic moduleId]) {
+  stop([moduleId]) {
     if (moduleId is String) {
       this._stop(new Symbol(moduleId));
     }
@@ -93,7 +93,7 @@ class Core {
     }
   }
   
-  void _stop(Symbol moduleId) {
+  _stop(Symbol moduleId) {
     if (!_runningModules.containsKey(moduleId)) {
       throw new StateError("Module with id #${moduleId} not running!");
     }
@@ -101,7 +101,7 @@ class Core {
     _runningModules.remove(moduleId).invoke(new Symbol("stop"), []);
   }
   
-  dynamic registered([String moduleName = null]) {
+  registered([String moduleName = null]) {
     if (moduleName != null) {
       return _registeredModules.containsKey(new Symbol(moduleName));
     }
@@ -110,7 +110,7 @@ class Core {
     }
   }
   
-  dynamic running([String moduleId = null]) {
+  running([String moduleId = null]) {
     if (moduleId != null) {
       return _runningModules.containsKey(new Symbol(moduleId));
     }

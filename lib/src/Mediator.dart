@@ -1,7 +1,5 @@
 part of dartscale;
 
-
-
 class MediatorTopic {
   
   StreamController _streamController = new StreamController.broadcast(sync: true);
@@ -11,7 +9,7 @@ class MediatorTopic {
     return this._streamController.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
   
-  void add(dynamic event) {
+  add(dynamic event) {
     this._streamController.add(event);
   }
 }

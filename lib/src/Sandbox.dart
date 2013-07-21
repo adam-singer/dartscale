@@ -4,11 +4,11 @@ class Sandbox {
   
   static Map<Symbol, dynamic> _plugins = new Map<Symbol, dynamic>();
   
-  Mediator mediator;
+  Mediator _mediator;
   
-  Sandbox(Mediator this.mediator);
+  Sandbox(Mediator this._mediator);
   
-  dynamic noSuchMethod(Invocation invocation) {
+  noSuchMethod(Invocation invocation) {
       var plugin = _plugins[invocation.memberName];
       
       if (invocation.isSetter) {
@@ -25,12 +25,14 @@ class Sandbox {
       else if (invocation.isMethod) {
         return Function.apply(plugin, invocation.positionalArguments, invocation.namedArguments);
       }
-      
-      
   }
   
-  static void registerPlugin(String name, dynamic plugin) {
+  static registerPlugin(String name, dynamic plugin) {
     _plugins[new Symbol(name)] = plugin;
+  }
+  
+  MediatorChannel channel (String channelName) {
+    return this._mediator.channel(channelName);
   }
 }
 
