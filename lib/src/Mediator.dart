@@ -9,7 +9,7 @@ class MediatorTopic {
     return this._streamController.stream.listen(onData, onError: onError, onDone: onDone, cancelOnError: cancelOnError);
   }
   
-  add(dynamic event) {
+  add([dynamic event]) {
     this._streamController.add(event);
   }
 }

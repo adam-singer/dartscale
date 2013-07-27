@@ -13,7 +13,6 @@ class Navigationbar {
                   '<button type="submit" class="btn btn-small">Search</button>',
                 '</form>'].join('');
     this._contentEl = new Element.html(html);
-    
     options['containerEl'].query('.container').append(this._contentEl);
     
     this.setupSearchForm();
@@ -32,6 +31,22 @@ class Navigationbar {
       
       this._sandbox.channel('navigationbar').topic('search').add(iptSearch.value);
       iptSearch.value = '';
+    });
+    
+    iptSearch.onKeyDown.listen((event) {
+      if (iptSearch.value.length > 1) {
+        var cache = iptSearch.value;
+        
+        if (event.keyCode == KeyCode.ENTER) {
+          event.preventDefault();
+          iptSearch.value = '';
+        }
+        
+        this._sandbox.channel('navigationbar').topic('filter').add(cache);
+      }
+      else {
+        this._sandbox.channel('navigationbar').topic('clearfilter').add();
+      }
     });
   }
 }

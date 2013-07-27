@@ -1,10 +1,11 @@
 library example;
 
 import 'dart:html';
-import '../../lib/dartscale.dart';
+import 'dart:json';
+import '../lib/dartscale.dart';
 
-part 'modules/Navigationbar.dart';
-part 'modules/ToDos.dart';
+part 'dart/Navigationbar.dart';
+part 'dart/ToDos.dart';
 
 main () {
   var core = new Core();

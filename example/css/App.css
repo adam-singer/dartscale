@@ -3105,21 +3105,24 @@ body {
 #module-todos ul {
   list-style: none;
 }
-#module-todos ul li {
+#module-todos ul li.record-todo {
   text-align: center;
   margin-bottom: 12px;
 }
-#module-todos ul li span {
+#module-todos ul li.record-todo.done {
+  text-decoration: line-through;
+}
+#module-todos ul li.record-todo span {
   padding: 0px 12px;
   font-size: 24px;
 }
-#module-todos ul li .icon {
+#module-todos ul li.record-todo .icon {
   margin-top: -2px;
 }
-#module-todos ul li .icon.icon-ok {
+#module-todos ul li.record-todo .icon.icon-ok {
   margin-left: 6px;
   margin-right: 4px;
 }
-#module-todos ul li .icon:hover {
+#module-todos ul li.record-todo .icon:hover {
   cursor: pointer;
 }
